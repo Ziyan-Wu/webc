@@ -37,7 +37,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$USER_HOME$/.julia/conda/3/envs/webc" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunManager" selected="Python.testtt">
     <configuration name="01get" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -148,7 +148,8 @@
       <workItem from="1662450126839" duration="22610000" />
       <workItem from="1662972058779" duration="7656000" />
       <workItem from="1663155460321" duration="15809000" />
-      <workItem from="1663241304098" duration="27667000" />
+      <workItem from="1663241304098" duration="33350000" />
+      <workItem from="1663488436435" duration="56046000" />
     </task>
     <servers />
   </component>
