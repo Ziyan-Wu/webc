@@ -10,6 +10,7 @@ import pandas as pd
 import matplotlib
 from matplotlib import pyplot as plt
 import prettytable as pt
+import ticket_buy
 
 '''读取城市code.json'''
 
@@ -23,11 +24,13 @@ with open("D:/03workplace/pachong/ex04_12306/citycode.json",
 
 # %%
 '''输入出发到达城市，时间'''
+from_station = city_data['西安']
+to_station = city_data['广州']
+train_date = '2022-10-02'
 
-from_station = city_data[input('departure city: ')]
-to_station = city_data[input('arrive city: ')]
-train_date = input('date (format: 2022-05-01): ')
-
+# from_station = city_data[input('departure city: ')]
+# to_station = city_data[input('arrive city: ')]
+# train_date = input('date (format: 2022-05-01): ')
 # print(from_station, to_station, train_date)
 
 '''根据输入-更改url'''
@@ -35,6 +38,8 @@ aim_link = 'https://kyfw.12306.cn/otn/leftTicket/queryZ?' \
            'leftTicketDTO.train_date={}&leftTicketDTO.from_station={}&' \
            'leftTicketDTO.to_station={}&purpose_codes=ADULT'.format(train_date, from_station, to_station)
 # print(aim_link)
+# https://kyfw.12306.cn/otn/leftTicket/queryZ?leftTicketDTO.train_date=2022-09-27&leftTicketDTO.from_station=XAY&leftTicketDTO.to_station=GZQ&purpose_codes=ADULT
+
 
 header = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                         'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -43,11 +48,10 @@ header = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
 
 response = requests.get(aim_link, headers=header)
 # print(response.status_code)
-# %%
-""" 获取内容 """
 
-# change to Chinese
-response.encoding = response.apparent_encoding
+
+""" 获取内容 """
+response.encoding = response.apparent_encoding  # change to Chinese
 
 # '''M1'''
 # response.text
@@ -67,6 +71,7 @@ response.encoding = response.apparent_encoding
 '''pretty table'''
 tb = pt.PrettyTable()
 tb.field_names = [
+    '序号',
     '车次',
     '发车时间',
     '到达时间',
@@ -85,6 +90,7 @@ tb.field_names = [
 ''' 内容解析 '''
 
 '''解析'''
+cnt = 0
 for ele in response.json()['data']['result']:
     info = ele.split('|')
     # print([*enumerate(ele.split('|'))])
@@ -105,6 +111,8 @@ for ele in response.json()['data']['result']:
     hard_seat = info[29]
     no_seat = info[26]
 
+    cnt += 1
+
     dic = {'车次': t_num,
            '发车时间': start_time, '到达时间': end_time, '车程': used_time,
            '特等': topGrade, '一等': first_class, '二等': second_class,
@@ -114,7 +122,7 @@ for ele in response.json()['data']['result']:
     # print(dic)
 
     tb.add_row([
-        t_num,
+        cnt, t_num,
         start_time, end_time, used_time,
         topGrade, first_class, second_class,
         soft_sleeper, hard_sleeper,
@@ -123,3 +131,13 @@ for ele in response.json()['data']['result']:
 # %%
 
 print(tb)
+
+No = input("Select the train's No.: ")
+
+ticket_buy.select_ticket(No, from_station, to_station, train_date) # 原始B站版本
+
+# ====================================================================================
+## 在查询的基础上，登录预定
+# ticket_buy.book_ticket(aim_link, No)
+## 此方法失败，aimlink打开后是包含目标查询信息的html文字版本，非直接从12306点击查询的网页格式
+# =========================================================================================
