@@ -1,0 +1,2 @@
+2022-09-27 08:35:42.339 wxauto.py[158] GetSessionList -> Find Control Timeout(10s): {ControlType: ListItemControl}
+2022-09-27 08:35:52.825 wxauto.py[185] ChatWith -> 
