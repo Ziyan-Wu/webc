@@ -10,11 +10,18 @@ import numpy as np
 import prettytable as pt
 import pandas as pd
 
+from smtplib import SMTP_SSL
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.header import Header
+
 '''
 获取链接========================
 '''
 holland2stay = 'https://holland2stay.com/residences.html?available_to_book=179'
 # 'https://holland2stay.com/residences/studio1-indefinite.html?available_to_book=179,336&city=25,90'
+
+# https://holland2stay.com/residences.html?_=1664690948191&available_to_book=179&p=2
 
 header = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
@@ -129,22 +136,46 @@ print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), '共有：{}套'.for
 微信通知========================================
 '''
 
-# 获取当前微信客户端
-wx = WeChat()
-# 获取会话列表
-wx.GetSessionList()
+# # 获取当前微信客户端
+# wx = WeChat()
+# # 获取会话列表
+# wx.GetSessionList()
+#
+# who1 = '文件传输助手'  # 这里填要发送的人的备注
+# who2 = 'S岳-1.12阴'
+# wx.ChatWith(who1)  # 只能给一个人发送
+#
+# if 'Rotterdam' in city:
+#     text = 'Holland2stay：鹿特丹！快去抢'
+#     wx.SendMsg(text)
+# else:
+#     text = 'Holland2stay：还没有你想要的'
 
-who1 = '文件传输助手'  # 这里填要发送的人的备注
-who2 = 'S岳-1.12阴'
-wx.ChatWith(who1)  # 只能给一个人发送
-
-if 'Rotterdam' in city:
-    text = 'Holland2stay：鹿特丹！快去抢'
-    wx.SendMsg(text)
-else:
-    text = 'Holland2stay：还没有你想要的'
 
 
 '''
-邮件通知
+邮件通知=================================
 '''
+host_server = 'smtp.qq.com'  # qq邮箱smtp服务器
+sender_qq = '865924194@qq.com'  # 发件人邮箱
+pwd = 'cxfumlezsziebfaj'
+receiver = ['juliawu97@outlook.com']  # 收件人邮箱
+# receiver = '913@qq.com'
+mail_title = 'Python自动发送_Holland2Stay'  # 邮件标题
+mail_content = "鹿特丹和海牙有房子了！！！"  # 邮件正文内容
+
+if city.count('Rotterdam') != 0 or city.count('Den Haag') != 0:
+    # 初始化一个邮件主体
+    msg = MIMEMultipart()
+    msg["Subject"] = Header(mail_title, 'utf-8')
+    msg["From"] = sender_qq
+    # msg["To"] = Header("测试邮箱",'utf-8')
+    msg['To'] = ";".join(receiver)
+    # 邮件正文内容
+    msg.attach(MIMEText(mail_content, 'plain', 'utf-8'))
+
+    smtp = SMTP_SSL(host_server)  # ssl登录
+    smtp.login(sender_qq, pwd)
+    smtp.sendmail(sender_qq, receiver, msg.as_string())
+    # quit():用于结束SMTP会话。
+    smtp.quit()
